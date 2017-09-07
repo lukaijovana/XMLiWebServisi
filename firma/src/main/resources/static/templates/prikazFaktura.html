@@ -1,0 +1,178 @@
+<table class="table table-striped table-hover" >
+	<thead> 
+		<tr>
+			<th>Id poruke</th>
+			<th>PIB dobavljaca</th>
+			<th>PIB kupca</th>
+			<th>Broj racuna</th>
+			<th>Iznos za uplatu</th>
+			<th>Uplata na racun</th>
+			<th>Datum racuna</th>
+			<th>Uplata na racun</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="faktura in fakture" id="{{faktura.id}}" ng-click="rowClick(faktura.id)">
+			<td>{{faktura.idPoruke}}</td>
+			<td>{{faktura.pibDobavljaca}}</td>
+			<td>{{faktura.pibKupca}}</td>
+			<td>{{faktura.brojRacuna}}</td>
+			<td>{{faktura.iznosZaUplatu}}</td>
+			<td>{{faktura.uplataNaRacun}}</td>
+			<td>{{faktura.datumRacuna}}</td>
+			<td>{{faktura.uplataNaRacun}}</td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="container col-lg-12 col-md-12 col-xs-12 col-sm-12">
+	<div class="row">
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				ID Poruke		
+			</label>
+			<input id = "idPoruke" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			  <label class="col-md-2 col-md-offset-4 col-lg-2 col-lg-offset-4 col-sm-2 col-sm-offset-4 col-xs-2 col-xs-offset-4"><input type="checkbox" id="hitno" value="">Hitno</label>
+			<button class="pull-right btn btn-default btn-sm col-lg-2" ng-click="posaljiNalog()">Posalji nalog</button>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Naziv kupca:	
+			</label>
+			<input id="nazivKupca" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Naziv dobavljaca:		
+			</label>
+			<input id="nazivDobavljaca" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled />
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				PIB kupca:		
+			</label>
+			<input id="pibKupca"class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				PIB dobavljaca:		
+			</label>
+			<input id="pibDobavljaca" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled />
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Adresa kupca:	
+			</label>
+			<input id="adresaKupca" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Adresa dobavljaca:		
+			</label>
+			<input id="adresaDobavljaca" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Broj racuna:		
+			</label>
+			<input id="brojRacuna" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Datum racuna:		
+			</label>
+			<input type="text" id="datumRacuna"  disabled/>
+			
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Vrednost robe:		
+			</label>
+			<input id="vrednostRobe" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Vrednost usluga:		
+			</label>
+			<input id="vrednostUsluga" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Ukupno roba i usluge:		
+			</label>
+			<input id="ukupnoRobaIUsluge" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Ukupan rabat:		
+			</label>
+			<input id="ukupanRabat" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" ng-model="ukupanRabat" type="text" disabled/>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Ukupan porez:		
+			</label>
+			<input id="ukupanPorez" ng-model="ukupanPorez" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Oznaka valute:		
+			</label>
+			<input id="oznakaValute" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Iznos za uplatu:		
+			</label>
+			<input id="iznosZaUplatu" value="{{ukupnoRobeIUsluga - ukupanRabat + ukupanPorez}}" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled/>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Uplata na racun:		
+			</label>
+			<input id="uplataNaRacun" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" disabled />
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Datum valute:		
+			</label>
+				<input type="text" id="datumValute" disabled>
+		</div>
+	</div>
+</div>
+<br/>
+<div class="container col-lg-offset-4 col-md-offset-2 col-sm-offset-2 col-lg-8 col-md-10">
+	<div class="row">
+	<h4>Stavke fakture:</h4>
+		<table class="table table-striped table-hover" >
+			<thead> 
+				<tr>
+					<th>Redni broj</th>
+					<th>Naziv robe/usluge</th>
+					<th>Kolicina</th>
+					<th>Jedinica mere</th>
+					<th>Jedinicna cena</th>
+					<th>Vrednost</th>
+					<th>Procenat rabata</th>
+					<th>Iznos rabata</th>
+					<th>Umanjeno za rabat</th>
+					<th>Ukupan porez</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="stavka in stavke">
+					<td>{{stavka.redniBroj}}</td>
+					<td>{{stavka.nazivRobe}}</td>
+					<td>{{stavka.kolicina}}</td>
+					<td>{{stavka.jedinicaMere}}</td>
+					<td>{{stavka.jedinicnaCena}}</td>
+					<td>{{stavka.vrednost}}</td>
+					<td>{{stavka.procenatRabata}}</td>
+					<td>{{stavka.iznosRabata}}</td>
+					<td>{{stavka.umanjenoZaRabat}}</td>
+					<td>{{stavka.ukupanPorez}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

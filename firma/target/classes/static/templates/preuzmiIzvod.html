@@ -1,0 +1,97 @@
+<table class="table table-striped table-hover" >
+	<thead> 
+		<tr>
+			<th>Broj Racuna</th>
+			<th>Datum Naloga</th>
+			<th>Broj Preseka</th>
+			<th>Prethodno Stanje</th>
+			<th>Broj Promena u Korist</th>
+			<th>Ukupno u Korist</th>
+			<th>Broj Promena na Teret</th>
+			<th>Ukupno na teret</th>
+			<th>Novo Stanje</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{izvodi.brojRacuna}}</td>
+			<td>{{izvodi.datumNaloga.toDateString()}}</td>
+			<td>{{izvodi.brojPreseka}}</td>
+			<td>{{izvodi.prethodnoStanje}}</td>
+			<td>{{izvodi.brojPromenaUKorist}}</td>
+			<td>{{izvodi.ukupnoUKorist}}</td>
+			<td>{{izvodi.brojPromenaNaTeret}}</td>
+			<td>{{izvodi.ukupnoNaTeret}}</td>
+			<td>{{izvodi.novoStanje}}</td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="container col-lg-12 col-md-12 col-xs-12 col-sm-12">
+	<div class="row">
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Broj Racuna		
+			</label>
+			<input id = "racun" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="text" />
+			<button class="pull-right btn btn-default btn-sm col-lg-2" ng-click="posaljiZahtev()">Posalji zahtev</button>
+		</div>
+		<br/>
+		<div class="row">
+			<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+				Redni Broj Preseka:	
+			</label>
+			<input id="rbrPreseka" class="col-lg-2 col-md-2 col-sm-2 col-xs-2" type="number" min="1" max="99"/>
+		</div>
+		<br/>
+		<div class="row">
+		<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+			Datum racuna:		
+		</label>
+		<input type="text" id="datepicker" ng-model="datumRacuna">
+		
+	</div>
+	</div>
+</div>
+<br/>
+<div class="container col-lg-8 col-md-10">
+	<div class="row">
+	<h4>Stavke fakture:</h4>
+		<table class="table table-striped table-hover" >
+			<thead> 
+				<tr>
+					<th>Duznik</th>
+					<th>Svrha Placanja</th>
+					<th>Primalac</th>
+					<th>Datum Naloga</th>
+					<th>Datum Valute</th>
+					<th>Racun Duznika</th>
+					<th>Model Zaduzenja</th>
+					<th>Poziv Na Broj Zaduzenja</th>
+					<th>Racun Poverioca</th>
+					<th>Model Odobrenja</th>
+					<th>Poziv Na Broj Odobrenja</th>
+					<th>Iznos</th>
+					<th>Smer</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="stavka in izvodi.stavke">
+					<td>{{stavka.duznikNalogodavac}}</td>
+					<td>{{stavka.svrhaPlacanja}}</td>
+					<td>{{stavka.primalacPoverilac}}</td>
+					<td>{{stavka.datumNaloga.toDateString()}}</td>
+					<td>{{stavka.datumValute.toDateString()}}</td>
+					<td>{{stavka.racunDuznika}}</td>
+					<td>{{stavka.modelZaduzenja}}</td>
+					<td>{{stavka.pozivNaBrojZaduzenja}}</td>
+					<td>{{stavka.racunPoverioca}}</td>
+					<td>{{stavka.modelOdobrenja}}</td>
+					<td>{{stavka.pozivNaBrojOdobrenja}}</td>
+					<td>{{stavka.iznos}}</td>
+					<td>{{stavka.smer}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

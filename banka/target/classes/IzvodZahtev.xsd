@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.informatika.ftn.uns.ac.rs/izvodZahtev"
+    xmlns:izvz="http://www.informatika.ftn.uns.ac.rs/izvodZahtev"
+        xmlns:izvo="http://www.informatika.ftn.uns.ac.rs/izvodOdgovor">
+
+<xs:import namespace="http://www.informatika.ftn.uns.ac.rs/izvodOdgovor" schemaLocation="IzvodOdgovor.xsd" />
+
+	 <xs:element name="sendIzvodZahtevRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Izvod_zahtev" type = "izvz:Izvod_zahtev"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getIzvodZahtevResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Odgovor" type = "izvo:Izvod_odgovor"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Izvod_zahtev">
+            <xs:sequence>
+                <xs:element name="Broj_racuna">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="18"/>
+                            <xs:maxLength value="18"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Datum" type="xs:date"/>
+                <xs:element name="Redni_broj_preseka">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:totalDigits value="2"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -1,0 +1,146 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://www.informatika.ftn.uns.ac.rs/nalogzp" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.informatika.ftn.uns.ac.rs/nalogzp" targetNamespace="http://www.informatika.ftn.uns.ac.rs/nalogzp">
+<wsdl:types>
+<xs:schema xmlns:nalzp="http://www.informatika.ftn.uns.ac.rs/nalogzp" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.informatika.ftn.uns.ac.rs/nalogzp">
+<xs:element name="getNalogZaPrenosRequest">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="ID_poruke" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="getNalogZaPrenosResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="Nalog_za_prenos" type="nalzp:Nalog_za_prenos"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:complexType name="Nalog_za_prenos">
+<xs:sequence>
+<xs:element name="ID_poruke">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="50"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Duznik">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="255"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Svrha_placanja">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="255"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Primalac">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="255"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Datum_naloga" type="xs:date"/>
+<xs:element name="Datum_valute" type="xs:date"/>
+<xs:element name="Racun_duznika">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="18"/>
+<xs:pattern value="\d{3}-\d{13}-\d{2}"/>
+<xs:minLength value="18"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Model_zaduzenja">
+<xs:simpleType>
+<xs:restriction base="xs:positiveInteger">
+<xs:totalDigits value="2"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Poziv_na_broj_zaduzenja">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="20"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Racun_primaoca">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="18"/>
+<xs:minLength value="18"/>
+<xs:pattern value="\d{3}-\d{13}-\d{2}"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Model_odobrenja">
+<xs:simpleType>
+<xs:restriction base="xs:positiveInteger">
+<xs:totalDigits value="2"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Poziv_na_broj_odobrenja">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="20"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Iznos">
+<xs:simpleType>
+<xs:restriction base="xs:decimal">
+<xs:totalDigits value="15"/>
+<xs:fractionDigits value="2"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Oznaka_valute">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="3"/>
+<xs:minLength value="3"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="Hitno" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="getNalogZaPrenosRequest">
+<wsdl:part element="tns:getNalogZaPrenosRequest" name="getNalogZaPrenosRequest"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="getNalogZaPrenosResponse">
+<wsdl:part element="tns:getNalogZaPrenosResponse" name="getNalogZaPrenosResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:portType name="NaloziPort">
+<wsdl:operation name="getNalogZaPrenos">
+<wsdl:input message="tns:getNalogZaPrenosRequest" name="getNalogZaPrenosRequest"></wsdl:input>
+<wsdl:output message="tns:getNalogZaPrenosResponse" name="getNalogZaPrenosResponse"></wsdl:output>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="NaloziPortSoap11" type="tns:NaloziPort">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="getNalogZaPrenos">
+<soap:operation soapAction=""/>
+<wsdl:input name="getNalogZaPrenosRequest">
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output name="getNalogZaPrenosResponse">
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="NaloziPortService">
+<wsdl:port binding="tns:NaloziPortSoap11" name="NaloziPortSoap11">
+<soap:address location="http://localhost:8083/ws"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
