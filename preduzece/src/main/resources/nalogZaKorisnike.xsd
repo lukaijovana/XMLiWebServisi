@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.informatika.ftn.uns.ac.rs/korisnickiNalog"
+    xmlns:kn="http://www.informatika.ftn.uns.ac.rs/korisnickiNalog">
+    
+    <xs:element name="createKorisnickiNalogRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Korisnicki_Nalog" type = "kn:Korisnicki_nalog"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="createKorisnickiNalogResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Odgovor" type = "xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Korisnicki_nalog">
+        <xs:sequence>
+            <xs:element name="Port_korisnika">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Port_banke">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Racun">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="18"/>
+                        <xs:minLength value="18"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Naziv" type="xs:string"/>
+            <xs:element name="Pib">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Stanje_na_racunu" type="xs:double"/>
+            <xs:element name="Rezervisana_suma" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
