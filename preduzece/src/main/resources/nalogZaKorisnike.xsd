@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-    targetNamespace="http://www.informatika.ftn.uns.ac.rs/korisnickiNalog"
-    xmlns:kn="http://www.informatika.ftn.uns.ac.rs/korisnickiNalog">
-    
-    <xs:element name="createKorisnickiNalogRequest">
+    targetNamespace="http://www.informatika.ftn.uns.ac.rs/nalogZaKorisnike"
+    xmlns:nzk="http://www.informatika.ftn.uns.ac.rs/nalogZaKorisnike">
+
+    <xs:element name="kreirajKorisnickiNalogZahtev">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Korisnicki_Nalog" type = "kn:Korisnicki_nalog"/>
+                <xs:element name="Korisnicki_Nalog" type="nzk:Korisnicki_nalog"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
-    <xs:element name="createKorisnickiNalogResponse">
+
+    <xs:element name="kreirajKorisnickiNalogOdg">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Odgovor" type = "xs:string"/>
+                <xs:element name="Odgovor" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

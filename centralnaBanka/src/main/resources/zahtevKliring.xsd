@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-    targetNamespace="http://www.informatika.ftn.uns.ac.rs/kliringZahtev"
-    xmlns:kz="http://www.informatika.ftn.uns.ac.rs/kliringZahtev">
+    targetNamespace="http://www.informatika.ftn.uns.ac.rs/zahtevKriling"
+    xmlns:zk="http://www.informatika.ftn.uns.ac.rs/zahtevKriling">
 
     <xs:element name="ZahtevKliring">
         <xs:complexType>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.informatika.ftn.uns.ac.rs/nalogZaKorisnike"
+    xmlns:nzk="http://www.informatika.ftn.uns.ac.rs/nalogZaKorisnike">
+
+    <xs:element name="nalogKorisnikaZahtev">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nkZahtev" type="nzk:nalogKorisnika"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="nalogKorisnikaOdgovor">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="nkOdg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="nalogKorisnika">
+        <xs:sequence>
+            <xs:element name="Port_korisnika">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Port_bnk">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Naziv" type="xs:string"/>
+            <xs:element name="Racun">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="18"/>
+                        <xs:minLength value="18"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Stanje_na_racunu" type="xs:double"/>
+            <xs:element name="Rezervisano" type="xs:double"/>
+            <xs:element name="PIB">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

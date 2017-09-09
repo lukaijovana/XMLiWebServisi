@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
     targetNamespace="http://www.informatika.ftn.uns.ac.rs/mt103"
-    xmlns:mt103="http://www.informatika.ftn.uns.ac.rs/mt103">
-    
-     <xs:element name="sendRtgsRequest">
+    xmlns:mt3="http://www.informatika.ftn.uns.ac.rs/mt103">
+
+    <xs:element name="zahtev103">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Mt103" type = "mt103:Mt103"/>
+                <xs:element name="MT103Zahtev" type="mt3:MT103"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
-    <xs:element name="sendRtgsResponse">
+
+    <xs:element name="odgovor103">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="Odgovor" type = "xs:string"/>
+                <xs:element name="MT103Odg" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
-    <xs:complexType name="Mt103">
+
+    <xs:complexType name="MT103">
         <xs:sequence>
-            <xs:element name="Duznik" type="mt103:TUcesnik"/>
-            <xs:element name="Primalac" type="mt103:TUcesnik"/>
+            <xs:element name="Duznik" type="mt3:Ucesnik"/>
+            <xs:element name="Primalac" type="mt3:Ucesnik"/>
             <xs:element name="ID_poruke">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
@@ -56,9 +56,9 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="TUcesnik">
+    <xs:complexType name="Ucesnik">
         <xs:sequence>
-            <xs:element name="SWIFT_kod">
+            <xs:element name="SWIFT">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
                         <xs:maxLength value="8"/>
@@ -99,7 +99,7 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="Poziv_na_broj">
+            <xs:element name="PNB">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
                         <xs:maxLength value="20"/>

@@ -1,0 +1,31 @@
+1504967232136	Rename package 'rs.ac.uns.ftn.informatika.korisnickinalog'
+1504967254109	Rename package 'rs.ac.uns.ftn.informatika.izvodzahtev'
+1504967276154	Rename package 'rs.ac.uns.ftn.informatika.nalogzp'
+1504967318832	Rename package 'rs.ac.uns.ftn.informatika.odgovorizvod'
+1504968134310	Delete elements
+1504968186243	Delete elements
+1504971343333	Delete element
+1504973534828	Delete element
+1504973697840	Delete elements
+1504973792110	Rename type 'BankaNalog'
+1504973821976	Rename type 'BankaController'
+1504973835023	Rename type 'BankaService'
+1504974224215	Rename type 'CounterPoslatihFaktura'
+1504974243165	Rename type 'PoslovniPartner'
+1504974261042	Rename type 'FaktureController'
+1504974283959	Rename type 'CounterPoslatihFakturaService'
+1504974296834	Rename type 'FakturaService'
+1504974312202	Rename type 'PoslovniPartnerService'
+1504974560781	Rename type 'BankaRepository'
+1504974584455	Rename type 'CounterPoslatihFakturaRepository'
+1504974649944	Rename type 'FakturaRepository'
+1504974990604	Rename type 'CounterFakturaController'
+1504975017738	Rename type 'PoslovniPartneriController'
+1504975175671	Rename type 'PoslovniPartnerRepository'
+1504975205284	Rename type 'StavkaRepository'
+1504975226392	Rename type 'BankaServiceImpl'
+1504975239821	Rename type 'FakturaServiceImpl'
+1504975256863	Rename type 'PoslovniPartnerServiceImpl'
+1504975266239	Rename type 'StavkaService'
+1504975279314	Rename type 'StavkaServiceImpl'
+1504975515433	Rename type 'CounterPoslatihFakturaServiceImpl'

@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<item value="F:\eclipse-jee-neon-3-win32-x86_64 (1)\eclipse\plugins\javax.xml.soap_1.2.0.v201005080501\lib" key="org.eclipse.jdt.ui.lastextjar"/>
-	<item value="F:\XML - git\centralnaBanka" key="org.eclipse.jdt.ui.last.external.project"/>
+	<item value="F:\XML - git\preduzece" key="org.eclipse.jdt.ui.last.external.project"/>
+	<section name="RefactoringWizard.preview">
+		<item value="600" key="width"/>
+		<item value="400" key="height"/>
+	</section>
+	<section name="org.eclipse.ltk.ui.refactoring.settings">
+		<item value="true" key="renameSubpackages"/>
+		<item value="true" key="updateQualifiedNames"/>
+		<item value="*" key="patterns"/>
+		<item value="true" key="updateSimilarElements"/>
+		<item value="1" key="updateSimilarElementsMatchStrategy"/>
+		<item value="true" key="updateTextualMatches"/>
+	</section>
 	<section name="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
 		<item value="2" key="layout"/>
 		<item value="true" key="group_libraries"/>
@@ -20,6 +32,9 @@
 		<item value="2" key="pageIndex"/>
 	</section>
 	<section name="quick_assist_proposal_size">
+	</section>
+	<section name="NewPackageWizardPage">
+		<item value="false" key="create_package_info_java"/>
 	</section>
 	<section name="completion_proposal_size">
 	</section>
