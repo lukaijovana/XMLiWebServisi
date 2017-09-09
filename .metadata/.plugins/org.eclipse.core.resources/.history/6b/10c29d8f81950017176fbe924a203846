@@ -1,0 +1,12 @@
+package rs.ac.uns.ftn.informatika.rest.service;
+
+import java.util.List;
+
+import rs.ac.uns.ftn.informatika.rest.domain.StavkaIzvoda;
+
+public interface StavkaIzvodaService {
+	List<StavkaIzvoda> findAll();
+	StavkaIzvoda findById(Long id);
+	void delete(Long id);
+	StavkaIzvoda save(StavkaIzvoda stavkaIzvoda);
+}

@@ -1,0 +1,40 @@
+package rs.ac.uns.ftn.informatika.rest.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import rs.ac.uns.ftn.informatika.rest.domain.StavkaIzvoda;
+import rs.ac.uns.ftn.informatika.rest.repository.StavkaIzvodaRepository;
+@Service
+public class StavkaIzvodaServiceImpl implements StavkaIzvodaService {
+	
+	@Autowired
+	StavkaIzvodaRepository stavkaIzvodaRepository;
+
+	@Override
+	public List<StavkaIzvoda> findAll() {
+		// TODO Auto-generated method stub
+		return stavkaIzvodaRepository.findAll();
+	}
+
+	@Override
+	public StavkaIzvoda findById(Long id) {
+		// TODO Auto-generated method stub
+		return stavkaIzvodaRepository.findById(id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+		stavkaIzvodaRepository.delete(id);
+	}
+
+	@Override
+	public StavkaIzvoda save(StavkaIzvoda stavkaIzvoda) {
+		// TODO Auto-generated method stub
+		return stavkaIzvodaRepository.save(stavkaIzvoda);
+	}
+
+}

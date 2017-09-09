@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<item value="F:\eclipse-jee-neon-3-win32-x86_64 (1)\eclipse\plugins\javax.xml.soap_1.2.0.v201005080501\lib" key="org.eclipse.jdt.ui.lastextjar"/>
+	<item value="false" key="delegateUpdating"/>
 	<item value="F:\XML - git\preduzece" key="org.eclipse.jdt.ui.last.external.project"/>
 	<section name="RefactoringWizard.preview">
 		<item value="600" key="width"/>

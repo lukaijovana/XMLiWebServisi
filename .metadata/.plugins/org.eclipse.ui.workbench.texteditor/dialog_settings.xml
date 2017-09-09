@@ -2,35 +2,37 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Partner" key="selection"/>
+		<item value="PrimiNalog" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="PoslovniPartner"/>
-			<item value="PoslovniPartnerService"/>
-			<item value="counterPoslatihFakturaRepository"/>
-			<item value="CounterPoslatih"/>
-			<item value="CreateKorisnickiNalogResponse"/>
-			<item value="CreateKorisnickiNalogRespone"/>
-			<item value="CreateKorisnickiNalogRequest"/>
-			<item value="Crea"/>
+			<item value="GetNalogZaPrenosResponse"/>
+			<item value="SendNalogZaPrenosRequest"/>
+			<item value="snedN"/>
+			<item value="NalogZaPrenos"/>
+			<item value="Service"/>
+			<item value="izvodRepository"/>
+			<item value="stavkaIzvodaRepository"/>
+			<item value="Izvodzahtev"/>
 		</list>
 		<list key="replacehistory">
-			<item value="Partner"/>
-			<item value="PartnerServis"/>
-			<item value="brojacFakturaRepozitorijum"/>
-			<item value="Brojac"/>
-			<item value="KreirajKorisnickiNalogOdg"/>
-			<item value="KreirajKorisnickiNalogZahtev"/>
+			<item value="PrimiNalog"/>
+			<item value="PosaljiNalog"/>
+			<item value="Nalog"/>
+			<item value="Servis"/>
+			<item value="izvodRepozitorijum"/>
+			<item value="stavkaIzvodaRepozitorijum"/>
+			<item value="ZahtevIzvod"/>
+			<item value="NalogBanke"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="284" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 		<item value="391" key="DIALOG_HEIGHT"/>
-		<item value="1081" key="DIALOG_X_ORIGIN"/>
-		<item value="145" key="DIALOG_Y_ORIGIN"/>
+		<item value="1210" key="DIALOG_X_ORIGIN"/>
+		<item value="211" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

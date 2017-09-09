@@ -1,0 +1,13 @@
+package rs.ac.uns.ftn.informatika.rest.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
+import rs.ac.uns.ftn.informatika.rest.domain.StavkaIzvoda;
+@org.springframework.stereotype.Repository
+public interface StavkaIzvodaRepository extends Repository<StavkaIzvoda, Long>{
+	public List<StavkaIzvoda> findAll();
+	public StavkaIzvoda findById(Long id);
+	public void delete(Long id);
+	public StavkaIzvoda save(StavkaIzvoda stavkaIzvoda);
+}
