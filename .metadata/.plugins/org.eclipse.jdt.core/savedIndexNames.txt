@@ -26,7 +26,6 @@ INDEX VERSION 1.130+F:\XML - git\.metadata\.plugins\org.eclipse.jdt.core
 2075892729.index
 870536342.index
 1788699685.index
-1056235364.index
 134360950.index
 102554329.index
 1056031855.index

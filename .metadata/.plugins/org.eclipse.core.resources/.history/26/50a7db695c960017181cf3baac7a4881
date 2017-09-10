@@ -1,0 +1,60 @@
+package centralnaBankaApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.domain.NalogBankeEntity;
+import rs.ac.uns.ftn.informatika.nalogbanke.CreateNalogBankeRequest;
+import rs.ac.uns.ftn.informatika.nalogbanke.CreateNalogBankeResponse;
+import rs.ac.uns.ftn.informatika.nalogbanke.GetNalogBankeRequest;
+import rs.ac.uns.ftn.informatika.nalogbanke.GetNalogBankeResponse;
+import rs.ac.uns.ftn.informatika.nalogbanke.NalogBanke;
+
+@Endpoint
+public class CreateNalogBankeEndPoint {
+	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/nalogBanke";
+	private NalogBankeService nalogBankeService;
+	@Autowired
+	public CreateNalogBankeEndPoint(NalogBankeServiceImpl nalogBankeService) {
+		this.nalogBankeService = nalogBankeService;
+	}
+	
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "createNalogBankeRequest")
+	@ResponsePayload
+	public CreateNalogBankeResponse getNalogZaPrenosRequest(@RequestPayload CreateNalogBankeRequest request) {
+		CreateNalogBankeResponse response = new CreateNalogBankeResponse();
+		NalogBankeEntity nIn = new NalogBankeEntity(request.getNalogBanke());
+		nalogBankeService.save(nIn);
+		return response;
+	}
+	
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getNalogBankeRequest")
+	@ResponsePayload
+	public GetNalogBankeResponse getNalogBankeRequest(@RequestPayload GetNalogBankeRequest request) {
+		GetNalogBankeResponse response = new GetNalogBankeResponse();
+		System.out.println("tuuuu");
+		List<NalogBankeEntity> nalozi = nalogBankeService.findAll();
+		NalogBankeEntity nalog = null;
+		for(NalogBankeEntity nal: nalozi) {
+			if(nal.getSifraBanke().equals(request.getPortBanke())) {
+				nalog = nal;
+				break;
+			}
+		}
+		NalogBanke nb = new NalogBanke();
+		nb.setObracunskiRacun(nalog.getObracunskiRacun());
+		nb.setPort(nalog.getPort());
+		nb.setSifraBanke(nalog.getSifraBanke());
+		nb.setStanjeNaRacunu(nalog.getStanjeNaRacunu());
+		nb.setSWIFT(nalog.getSWIFT());
+
+		response.setNalogBanke(nb);
+		return response;
+	}
+}

@@ -1,0 +1,131 @@
+package bankApp;
+
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ClassUtils;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.domen.NalogKorisnikaEntity;
+import rs.ac.uns.ftn.informatika.domen.NalogBankeEntity;
+import rs.ac.uns.ftn.informatika.domen.NalogZaPrenosEntity;
+import rs.ac.uns.ftn.informatika.mt102.MT102;
+import rs.ac.uns.ftn.informatika.mt102.Zahtev102;
+import rs.ac.uns.ftn.informatika.mt102.Odgovor102;
+import rs.ac.uns.ftn.informatika.mt102.Stavka;
+import rs.ac.uns.ftn.informatika.mt900.Zahtev900;
+import rs.ac.uns.ftn.informatika.mt900.Odgovor900;
+
+@Endpoint
+public class MT102EndPoint {
+	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/mt102";
+	private NalogService nalogService;
+	private NalogKorisnikaServis nalogKorisnikaServis;
+	private BankarskiNalogServis bankarskiNalogServis;
+
+	@Autowired
+	public MT102EndPoint(NalogServiceImpl nalogService, NalogKorisnikaServisImpl korisnickiNalogService, BankarskiNalogServisImpl nalogBankeService) {
+		this.bankarskiNalogServis = nalogBankeService;
+		System.out.println("kreira 102 end point na banci");
+		this.nalogService = nalogService;
+		this.nalogKorisnikaServis = korisnickiNalogService;
+	}
+	
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "send102Request")
+	@ResponsePayload
+	public Odgovor102 send102Request(@RequestPayload Zahtev102 request) {
+		System.out.println("Pogodjen 102 request");
+		Odgovor102 response = new Odgovor102();
+		MT102 mt102 = new MT102();
+		
+		//datum
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTime(new Date());
+		try {
+			mt102.setDatum(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Datum OK");
+		mt102.setDatumValute(mt102.getDatum());
+		mt102.setIDPoruke("Clearing po zahtevu.");
+
+		List<NalogBankeEntity> banke = bankarskiNalogServis.findAll();
+		for(NalogBankeEntity k: banke) {
+			if(k.getPort().equals(request.getMT102Zahtev()))
+			{
+				//Korisnik koji je stvarno u ovoj banci nad kojom trazim 102 za kliring
+				mt102.setRacunBnkDuznika(k.getObracunskiRacun());
+				mt102.setSWIFTBnkDuznika(k.getSWIFT());
+			}			
+		}
+		//TODO: Trebalo bi pogoditi drugu banku i preuzeti stvarne ali bmk i tako se ne koristi nigde
+		mt102.setRacunBnkPoverioca("111000000000809111");
+		mt102.setSWIFTBnkPoverioca("BANKRS11");
+		System.out.println("Poverliac Duznik OK");
+		String sifraValute = "";
+		double ukupanIznos = 0;
+		
+		List<NalogZaPrenosEntity> nalozi = nalogService.findAll();
+		
+		for (NalogZaPrenosEntity nalog : nalozi) {
+			
+			//Nalozi za obraditi
+			if(!nalog.isClear() && !nalog.isHitno())
+			{
+				Stavka stavka = new Stavka();
+				
+				GregorianCalendar c1 = new GregorianCalendar();
+				c1.setTime(nalog.getDatumNaloga());
+				try {
+					stavka.setDatumNaloga(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+				} catch (DatatypeConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				stavka.setDuznik(nalog.getDuznik());
+				stavka.setIDNaloga(nalog.getIdPoruke());
+				stavka.setIznos(nalog.getIznos());
+				stavka.setModelOdobrenja(nalog.getModelOdobrenja().intValue());
+				stavka.setModelZaduzenja(nalog.getModelZaduzenja().intValue());
+				stavka.setPNBOdobrenja(nalog.getPozivNaBrojOdobrenja());
+				stavka.setPNBZaduzenja(nalog.getPozivNaBrojZaduzenja());
+				stavka.setPrimalac(nalog.getPrimalac());
+				stavka.setRacunDuznika(nalog.getRacunDuznika());
+				stavka.setRacunPoverioca(nalog.getRacunPrimaoca());
+				stavka.setSifraValute(nalog.getOznakaValute());
+				stavka.setSvrhaPlacanja(nalog.getSvrhaPlacanja());
+				
+				ukupanIznos = ukupanIznos + nalog.getIznos().doubleValue();
+				sifraValute = nalog.getOznakaValute();
+				
+				mt102.getNalozi().add(stavka);
+			}
+			
+		}
+		System.out.println("Stavke OK OK");
+		mt102.setSifraValute(sifraValute);
+		mt102.setIznos(BigDecimal.valueOf(ukupanIznos));
+		
+		response.setMT102Odg(mt102);
+		System.out.println("OK OK OK OK OK OK OK");
+		return response;
+	}
+
+}

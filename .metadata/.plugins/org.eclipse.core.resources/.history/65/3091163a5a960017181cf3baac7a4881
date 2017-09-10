@@ -1,0 +1,36 @@
+package bankApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import rs.ac.uns.ftn.informatika.domen.NalogBankeEntity;
+
+@Service
+public class NalogBankeServiceImpl implements BankarskiNalogServis {
+	
+	@Autowired
+	private BankarskiNalogRepozitorijum bankarskiNalogRepozitorijum;
+	
+	@Override
+	public List<NalogBankeEntity> findAll() {
+		return bankarskiNalogRepozitorijum.findAll();
+	}
+
+	@Override
+	public NalogBankeEntity findById(Long id) {
+		return bankarskiNalogRepozitorijum.findById(id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		bankarskiNalogRepozitorijum.delete(id);
+	}
+
+	@Override
+	public NalogBankeEntity save(NalogBankeEntity nalog) {
+		return bankarskiNalogRepozitorijum.save(nalog);
+	}
+
+}
