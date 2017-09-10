@@ -45,12 +45,12 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Bean
 	public XsdSchema mt102Schema() {
-		return new SimpleXsdSchema(new ClassPathResource("Mt102.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("MT102.xsd"));
 	}
 
 	@Bean
 	public XsdSchema korisnickiNalogSchema() {
-		return new SimpleXsdSchema(new ClassPathResource("KorisnickiNalog.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("nalogZaKorisnike.xsd"));
 	}
 	
 	@Bean(name = "izvodi")
@@ -65,7 +65,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Bean
 	public XsdSchema izvodiSchema() {
-		return new SimpleXsdSchema(new ClassPathResource("IzvodZahtev.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("zahtevIzvod.xsd"));
 	}
 	
 	@Bean(name = "nalozi")
@@ -80,7 +80,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Bean
 	public XsdSchema naloziSchema() {
-		return new SimpleXsdSchema(new ClassPathResource("NalogZaPrenos.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("nalogZaPlacanje.xsd"));
 	}
 	
 	@Bean(name = "mt900")
@@ -95,7 +95,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Bean
 	public XsdSchema mt900Schema() {
-		return new SimpleXsdSchema(new ClassPathResource("Mt900.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("MT900.xsd"));
 	}
 	
 	@Bean(name = "mt910")
@@ -110,6 +110,6 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 	@Bean
 	public XsdSchema mt910Schema() {
-		return new SimpleXsdSchema(new ClassPathResource("Mt910.xsd"));
+		return new SimpleXsdSchema(new ClassPathResource("MT910.xsd"));
 	}
 }

@@ -2,30 +2,30 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="..." key="selection"/>
+		<item value="nalogBankeService" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="..."/>
-			<item value="GetNalogZaPrenosResponse"/>
-			<item value="SendNalogZaPrenosRequest"/>
-			<item value="snedN"/>
-			<item value="NalogZaPrenos"/>
-			<item value="Service"/>
-			<item value="izvodRepository"/>
-			<item value="stavkaIzvodaRepository"/>
+			<item value="NalogBankeService"/>
+			<item value="SendMt910Response"/>
+			<item value="SendMt910Request"/>
+			<item value="Mt910"/>
+			<item value="SendMt900Response"/>
+			<item value="SendMt900Request"/>
+			<item value="Mt900"/>
+			<item value="TUcesnik"/>
 		</list>
 		<list key="replacehistory">
-			<item value="PrimiNalog"/>
-			<item value="PosaljiNalog"/>
-			<item value="Nalog"/>
-			<item value="Servis"/>
-			<item value="izvodRepozitorijum"/>
-			<item value="stavkaIzvodaRepozitorijum"/>
-			<item value="ZahtevIzvod"/>
-			<item value="NalogBanke"/>
+			<item value="BankarskiNalogServis"/>
+			<item value="Odgovor910"/>
+			<item value="Zahtev910"/>
+			<item value="MT910"/>
+			<item value="Odgovor900"/>
+			<item value="Zahtev900"/>
+			<item value="MT900"/>
+			<item value="Ucesnik"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
