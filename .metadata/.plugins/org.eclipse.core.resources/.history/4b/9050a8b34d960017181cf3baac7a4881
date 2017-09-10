@@ -1,0 +1,34 @@
+package hello;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import rs.ac.uns.ftn.informatika.domain.KorisnickiNalogEntity;
+
+@Service
+public class KorisnickiNalogServiceImpl implements KorisnickiNalogService {
+	@Autowired
+	private KorisnickiNalogRepository korisnickiNalogRepository;
+
+	@Override
+	public List<KorisnickiNalogEntity> findAll() {
+		return korisnickiNalogRepository.findAll();
+	}
+
+	@Override
+	public KorisnickiNalogEntity findById(Long id) {
+		return korisnickiNalogRepository.findById(id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		korisnickiNalogRepository.delete(id);
+	}
+
+	@Override
+	public KorisnickiNalogEntity save(KorisnickiNalogEntity nalog) {
+		return korisnickiNalogRepository.save(nalog);
+	}
+}

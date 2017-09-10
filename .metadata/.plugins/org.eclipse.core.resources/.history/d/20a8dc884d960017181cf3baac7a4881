@@ -1,0 +1,15 @@
+package hello;
+
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
+
+import rs.ac.uns.ftn.informatika.domain.KorisnickiNalogEntity;
+import rs.ac.uns.ftn.informatika.korisnickinalog.KorisnickiNalog;
+
+public interface KorisnickiNalogRepository extends Repository<KorisnickiNalogEntity, Long>{
+	public List<KorisnickiNalogEntity> findAll();
+	public KorisnickiNalogEntity findById(Long id);
+	public void delete(Long id);
+	public KorisnickiNalogEntity save(KorisnickiNalogEntity nalog);
+}

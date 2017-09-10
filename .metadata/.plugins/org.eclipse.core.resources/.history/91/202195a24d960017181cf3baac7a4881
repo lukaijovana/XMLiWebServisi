@@ -1,0 +1,12 @@
+package hello;
+
+import java.util.List;
+
+import rs.ac.uns.ftn.informatika.domain.KorisnickiNalogEntity;
+
+public interface KorisnickiNalogService {
+	public List<KorisnickiNalogEntity> findAll();
+	public KorisnickiNalogEntity findById(Long id);
+	public void delete(Long id);
+	public KorisnickiNalogEntity save(KorisnickiNalogEntity nalog);
+}
