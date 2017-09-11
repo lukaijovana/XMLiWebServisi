@@ -21,8 +21,8 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import rs.ac.uns.ftn.informatika.domen.NalogKorisnikaEntity;
-import rs.ac.uns.ftn.informatika.domen.BankarskiNalogEntity;
-import rs.ac.uns.ftn.informatika.domen.NalogZaPlacanjeEntity;
+import rs.ac.uns.ftn.informatika.domen.NalogBankeEntity;
+import rs.ac.uns.ftn.informatika.domen.NalogZaPrenosEntity;
 import rs.ac.uns.ftn.informatika.mt102.MT102;
 import rs.ac.uns.ftn.informatika.mt102.Zahtev102;
 import rs.ac.uns.ftn.informatika.mt102.Odgovor102;
@@ -31,18 +31,18 @@ import rs.ac.uns.ftn.informatika.mt900.Zahtev900;
 import rs.ac.uns.ftn.informatika.mt900.Odgovor900;
 
 @Endpoint
-public class MT102EndPoint {
+public class Mt102EndPoint {
 	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/mt102";
-	private NalogServis nalogServis;
-	private NalogKorisnikaServis nalogKorisnikaServis;
-	private BankarskiNalogServis bankarskiNalogServis;
+	private NalogService nalogService;
+	private KorisnickiNalogService korisnickiNalogService;
+	private NalogBankeService nalogBankeService;
 
 	@Autowired
-	public MT102EndPoint(NalogServisImpl nalogService, NalogKorisnikaServisImpl korisnickiNalogService, BankarskiNalogServisImpl nalogBankeService) {
-		this.bankarskiNalogServis = nalogBankeService;
+	public Mt102EndPoint(NalogServiceImpl nalogService, KorisnickiNalogServiceImpl korisnickiNalogService, NalogBankeServiceImpl nalogBankeService) {
+		this.nalogBankeService = nalogBankeService;
 		System.out.println("kreira 102 end point na banci");
-		this.nalogServis = nalogService;
-		this.nalogKorisnikaServis = korisnickiNalogService;
+		this.nalogService = nalogService;
+		this.korisnickiNalogService = korisnickiNalogService;
 	}
 	
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "send102Request")
@@ -65,8 +65,8 @@ public class MT102EndPoint {
 		mt102.setDatumValute(mt102.getDatum());
 		mt102.setIDPoruke("Clearing po zahtevu.");
 
-		List<BankarskiNalogEntity> banke = bankarskiNalogServis.findAll();
-		for(BankarskiNalogEntity k: banke) {
+		List<NalogBankeEntity> banke = nalogBankeService.findAll();
+		for(NalogBankeEntity k: banke) {
 			if(k.getPort().equals(request.getMT102Zahtev()))
 			{
 				//Korisnik koji je stvarno u ovoj banci nad kojom trazim 102 za kliring
@@ -81,9 +81,9 @@ public class MT102EndPoint {
 		String sifraValute = "";
 		double ukupanIznos = 0;
 		
-		List<NalogZaPlacanjeEntity> nalozi = nalogServis.findAll();
+		List<NalogZaPrenosEntity> nalozi = nalogService.findAll();
 		
-		for (NalogZaPlacanjeEntity nalog : nalozi) {
+		for (NalogZaPrenosEntity nalog : nalozi) {
 			
 			//Nalozi za obraditi
 			if(!nalog.isClear() && !nalog.isHitno())

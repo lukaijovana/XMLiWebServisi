@@ -11,11 +11,7 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-<<<<<<< HEAD
 import rs.ac.uns.ftn.informatika.domen.NalogBankeEntity;
-=======
-import rs.ac.uns.ftn.informatika.domen.BankarskiNalogEntity;
->>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 import rs.ac.uns.ftn.informatika.mt103.MT103;
 import rs.ac.uns.ftn.informatika.mt103.Zahtev103;
 import rs.ac.uns.ftn.informatika.mt103.Odgovor103;
@@ -29,15 +25,9 @@ import rs.ac.uns.ftn.informatika.mt910.Odgovor910;
 @Endpoint
 public class RtgsEndPoint {
 	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/mt103";
-<<<<<<< HEAD
 	private NalogBankeService nalogBankeService;
 	@Autowired
 	public RtgsEndPoint(NalogBankeServiceImpl nalogBankeService) {
-=======
-	private BankarskiNalogServis nalogBankeService;
-	@Autowired
-	public RtgsEndPoint(BankarskiNalogServisImpl nalogBankeService) {
->>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 		this.nalogBankeService = nalogBankeService;
 	}
 	
@@ -73,7 +63,6 @@ public class RtgsEndPoint {
 		Odgovor103 response = new Odgovor103();
 		System.out.println("gadja rtgs cb");
 		//prosledi odgovarajucoj banci i zaduzi obracunski racun banke i dodaj na drugi
-<<<<<<< HEAD
 		List<NalogBankeEntity> banke = nalogBankeService.findAll();
 		for(NalogBankeEntity b: banke) {
 			System.out.println(b.getSifraBanke());
@@ -82,16 +71,6 @@ public class RtgsEndPoint {
 		NalogBankeEntity zaZaduziti = null;
 		NalogBankeEntity zaOdobriti = null;
 		for(NalogBankeEntity nb: banke) {
-=======
-		List<BankarskiNalogEntity> banke = nalogBankeService.findAll();
-		for(BankarskiNalogEntity b: banke) {
-			System.out.println(b.getSifraBanke());
-		}
-		MT103 nalog = request.getMT103Zahtev();
-		BankarskiNalogEntity zaZaduziti = null;
-		BankarskiNalogEntity zaOdobriti = null;
-		for(BankarskiNalogEntity nb: banke) {
->>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 			if(nb.getObracunskiRacun().equals(nalog.getDuznik().getObracunskiRacun())) {
 				zaZaduziti = nb;
 			} else if(nb.getObracunskiRacun().equals(nalog.getPrimalac().getObracunskiRacun())) {
