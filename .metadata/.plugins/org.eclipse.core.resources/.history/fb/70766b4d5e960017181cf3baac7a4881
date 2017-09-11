@@ -1,0 +1,151 @@
+package centralnaBankaApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ClassUtils;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.domen.BankarskiNalogEntity;
+import rs.ac.uns.ftn.informatika.mt103.MT103;
+import rs.ac.uns.ftn.informatika.mt103.Zahtev103;
+import rs.ac.uns.ftn.informatika.mt103.Odgovor103;
+import rs.ac.uns.ftn.informatika.mt900.MT900;
+import rs.ac.uns.ftn.informatika.mt900.Zahtev900;
+import rs.ac.uns.ftn.informatika.mt900.Odgovor900;
+import rs.ac.uns.ftn.informatika.mt910.MT910;
+import rs.ac.uns.ftn.informatika.mt910.Zahtev910;
+import rs.ac.uns.ftn.informatika.mt910.Odgovor910;
+
+@Endpoint
+public class RtgsEndPoint {
+	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/mt103";
+	private BankarskiNalogServis nalogBankeService;
+	@Autowired
+	public RtgsEndPoint(BankarskiNalogServisImpl nalogBankeService) {
+		this.nalogBankeService = nalogBankeService;
+	}
+	
+	private void posaljiMt900(MT900 mt900, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(Zahtev900.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		Zahtev900 request = new Zahtev900();
+		request.setMt900(mt900);
+		Odgovor900 resp = (Odgovor900) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	private void posaljiMt910(MT910 mt910, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(Zahtev910.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		Zahtev910 request = new Zahtev910();
+		request.setMt910(mt910);
+		Odgovor910 resp = (Odgovor910) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "sendRtgsRequest")
+	@ResponsePayload
+	public Odgovor103 getNalogZaPrenosRequest(@RequestPayload Zahtev103 request) {
+		Odgovor103 response = new Odgovor103();
+		System.out.println("gadja rtgs cb");
+		//prosledi odgovarajucoj banci i zaduzi obracunski racun banke i dodaj na drugi
+		List<BankarskiNalogEntity> banke = nalogBankeService.findAll();
+		for(BankarskiNalogEntity b: banke) {
+			System.out.println(b.getSifraBanke());
+		}
+		MT103 nalog = request.getMt103();
+		BankarskiNalogEntity zaZaduziti = null;
+		BankarskiNalogEntity zaOdobriti = null;
+		for(BankarskiNalogEntity nb: banke) {
+			if(nb.getObracunskiRacun().equals(nalog.getDuznik().getObracunskiRacun())) {
+				zaZaduziti = nb;
+			} else if(nb.getObracunskiRacun().equals(nalog.getPrimalac().getObracunskiRacun())) {
+				zaOdobriti = nb;
+			}
+		}
+		System.out.println("za zaduziti " + zaZaduziti);
+		System.out.println("za odobriti " + zaOdobriti);
+		if(zaZaduziti != null && zaOdobriti != null) {
+			double obracunskiDuznika = zaZaduziti.getStanjeNaRacunu();
+			obracunskiDuznika -= nalog.getIznos().doubleValue();
+			if(obracunskiDuznika >= 0) {
+				//ima dovoljno sredstava banka duznik, dodaj iznos banci primaocu
+				double obracunskiPrimaoca = zaOdobriti.getStanjeNaRacunu();
+				obracunskiPrimaoca += nalog.getIznos().doubleValue();
+				//posalji nalog i poruku odobrenja banci primaoca/zaodobriti
+				//posalji poruku o zaduzenju banci duznika
+				MT900 odg = new MT900();
+				odg.setIDPoruke("9");
+				odg.setSWIFTKodDuznika(nalog.getDuznik().getSWIFTKod());
+				odg.setDatumValute(nalog.getDatumValute());
+				odg.setIDPorukeNaloga(nalog.getIDPoruke());
+				odg.setIznos(nalog.getIznos());
+				odg.setObracunskiRacunBankeDuznika(nalog.getDuznik().getObracunskiRacun());
+				odg.setSifraValute(nalog.getSifraValute());
+				zaZaduziti.setStanjeNaRacunu(obracunskiDuznika);
+				nalogBankeService.save(zaZaduziti);
+				zaOdobriti.setStanjeNaRacunu(obracunskiPrimaoca);
+				nalogBankeService.save(zaOdobriti);
+				response.setOdgovor("proslo");
+				try {
+					posaljiMt900(odg, zaZaduziti.getPort());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				//poslati mt103 primaocu
+				try {
+					posaljiMt103(nalog, zaOdobriti.getPort());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				//poslati mt910 primaocu
+				MT910 mt910 = new MT910();
+				mt910.setIDPoruke("10");
+				mt910.setDatumValute(nalog.getDatumValute());
+				mt910.setIDPorukeNaloga(nalog.getIDPoruke());
+				mt910.setIznos(nalog.getIznos());
+				mt910.setObracunskiRacunBankePoverioca(zaOdobriti.getObracunskiRacun());
+				mt910.setSWIFTKodPoverioca(zaOdobriti.getSWIFT());
+				mt910.setSifraValute(nalog.getSifraValute());
+				try {
+					posaljiMt910(mt910, zaOdobriti.getPort());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				//banka nema dovoljno sredstava, odbij
+			}
+		}
+		
+		
+		return response;
+	}
+
+	private void posaljiMt103(MT103 nalog, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(Zahtev103.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		Zahtev103 request = new Zahtev103();
+		request.setMt103(nalog);
+		Odgovor103 resp = (Odgovor103) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+}

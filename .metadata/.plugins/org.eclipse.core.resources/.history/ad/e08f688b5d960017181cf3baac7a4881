@@ -1,0 +1,151 @@
+package centralnaBankaApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ClassUtils;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.domain.NalogBankeEntity;
+import rs.ac.uns.ftn.informatika.mt103.Mt103;
+import rs.ac.uns.ftn.informatika.mt103.SendRtgsRequest;
+import rs.ac.uns.ftn.informatika.mt103.SendRtgsResponse;
+import rs.ac.uns.ftn.informatika.mt900.Mt900;
+import rs.ac.uns.ftn.informatika.mt900.SendMt900Request;
+import rs.ac.uns.ftn.informatika.mt900.SendMt900Response;
+import rs.ac.uns.ftn.informatika.mt910.Mt910;
+import rs.ac.uns.ftn.informatika.mt910.SendMt910Request;
+import rs.ac.uns.ftn.informatika.mt910.SendMt910Response;
+
+@Endpoint
+public class RtgsEndPoint {
+	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/mt103";
+	private NalogBankeService nalogBankeService;
+	@Autowired
+	public RtgsEndPoint(NalogBankeServiceImpl nalogBankeService) {
+		this.nalogBankeService = nalogBankeService;
+	}
+	
+	private void posaljiMt900(Mt900 mt900, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendMt900Request.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendMt900Request request = new SendMt900Request();
+		request.setMt900(mt900);
+		SendMt900Response resp = (SendMt900Response) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	private void posaljiMt910(Mt910 mt910, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendMt910Request.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendMt910Request request = new SendMt910Request();
+		request.setMt910(mt910);
+		SendMt910Response resp = (SendMt910Response) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "sendRtgsRequest")
+	@ResponsePayload
+	public SendRtgsResponse getNalogZaPrenosRequest(@RequestPayload SendRtgsRequest request) {
+		SendRtgsResponse response = new SendRtgsResponse();
+		System.out.println("gadja rtgs cb");
+		//prosledi odgovarajucoj banci i zaduzi obracunski racun banke i dodaj na drugi
+		List<NalogBankeEntity> banke = nalogBankeService.findAll();
+		for(NalogBankeEntity b: banke) {
+			System.out.println(b.getSifraBanke());
+		}
+		Mt103 nalog = request.getMt103();
+		NalogBankeEntity zaZaduziti = null;
+		NalogBankeEntity zaOdobriti = null;
+		for(NalogBankeEntity nb: banke) {
+			if(nb.getObracunskiRacun().equals(nalog.getDuznik().getObracunskiRacun())) {
+				zaZaduziti = nb;
+			} else if(nb.getObracunskiRacun().equals(nalog.getPrimalac().getObracunskiRacun())) {
+				zaOdobriti = nb;
+			}
+		}
+		System.out.println("za zaduziti " + zaZaduziti);
+		System.out.println("za odobriti " + zaOdobriti);
+		if(zaZaduziti != null && zaOdobriti != null) {
+			double obracunskiDuznika = zaZaduziti.getStanjeNaRacunu();
+			obracunskiDuznika -= nalog.getIznos().doubleValue();
+			if(obracunskiDuznika >= 0) {
+				//ima dovoljno sredstava banka duznik, dodaj iznos banci primaocu
+				double obracunskiPrimaoca = zaOdobriti.getStanjeNaRacunu();
+				obracunskiPrimaoca += nalog.getIznos().doubleValue();
+				//posalji nalog i poruku odobrenja banci primaoca/zaodobriti
+				//posalji poruku o zaduzenju banci duznika
+				Mt900 odg = new Mt900();
+				odg.setIDPoruke("9");
+				odg.setSWIFTKodDuznika(nalog.getDuznik().getSWIFTKod());
+				odg.setDatumValute(nalog.getDatumValute());
+				odg.setIDPorukeNaloga(nalog.getIDPoruke());
+				odg.setIznos(nalog.getIznos());
+				odg.setObracunskiRacunBankeDuznika(nalog.getDuznik().getObracunskiRacun());
+				odg.setSifraValute(nalog.getSifraValute());
+				zaZaduziti.setStanjeNaRacunu(obracunskiDuznika);
+				nalogBankeService.save(zaZaduziti);
+				zaOdobriti.setStanjeNaRacunu(obracunskiPrimaoca);
+				nalogBankeService.save(zaOdobriti);
+				response.setOdgovor("proslo");
+				try {
+					posaljiMt900(odg, zaZaduziti.getPort());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				//poslati mt103 primaocu
+				try {
+					posaljiMt103(nalog, zaOdobriti.getPort());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				//poslati mt910 primaocu
+				Mt910 mt910 = new Mt910();
+				mt910.setIDPoruke("10");
+				mt910.setDatumValute(nalog.getDatumValute());
+				mt910.setIDPorukeNaloga(nalog.getIDPoruke());
+				mt910.setIznos(nalog.getIznos());
+				mt910.setObracunskiRacunBankePoverioca(zaOdobriti.getObracunskiRacun());
+				mt910.setSWIFTKodPoverioca(zaOdobriti.getSWIFT());
+				mt910.setSifraValute(nalog.getSifraValute());
+				try {
+					posaljiMt910(mt910, zaOdobriti.getPort());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				//banka nema dovoljno sredstava, odbij
+			}
+		}
+		
+		
+		return response;
+	}
+
+	private void posaljiMt103(Mt103 nalog, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendRtgsRequest.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendRtgsRequest request = new SendRtgsRequest();
+		request.setMt103(nalog);
+		SendRtgsResponse resp = (SendRtgsResponse) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+}

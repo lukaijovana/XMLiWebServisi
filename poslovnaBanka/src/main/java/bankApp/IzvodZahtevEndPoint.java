@@ -17,7 +17,11 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import rs.ac.uns.ftn.informatika.domen.NalogKorisnikaEntity;
+<<<<<<< HEAD
 import rs.ac.uns.ftn.informatika.domen.NalogZaPrenosEntity;
+=======
+import rs.ac.uns.ftn.informatika.domen.NalogZaPlacanjeEntity;
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 import rs.ac.uns.ftn.informatika.odgovorizvod.PreuzetOdgovor;
 import rs.ac.uns.ftn.informatika.odgovorizvod.OdgovorIzvod;
 import rs.ac.uns.ftn.informatika.odgovorizvod.PresekStavki;
@@ -25,15 +29,25 @@ import rs.ac.uns.ftn.informatika.zahtevizvod.PreuzetZahtev;
 import rs.ac.uns.ftn.informatika.zahtevizvod.PoslatZahtev;
 import rs.ac.uns.ftn.informatika.nalogzaplacanje.PrimiNalog;
 import rs.ac.uns.ftn.informatika.nalogzaplacanje.Nalog;
+<<<<<<< HEAD
 import rs.ac.uns.ftn.informatika.nalogzaplacanje.PosaljiNalog;
+=======
+import rs.ac.uns.ftn.informatika.nalogzaplacanje.PosaljiNalog ;
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 
 @Endpoint
 public class IzvodZahtevEndPoint {
 
 	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/izvodZahtev";
+<<<<<<< HEAD
 	private NalogService nalogService;
 	private KorisnickiNalogService korisnickiNalogService;
 	private NalogBankeService nalogBankeService;
+=======
+	private NalogServis nalogServis;
+	private NalogKorisnikaServis nalogKorisnikaServis;
+	private BankarskiNalogServis bankarskiNalogServis;
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 	
 	@SuppressWarnings("deprecation")
 	private boolean istidan(Date prvi, Date drugi)
@@ -46,11 +60,19 @@ public class IzvodZahtevEndPoint {
 	}
 	
 	@Autowired
+<<<<<<< HEAD
 	public IzvodZahtevEndPoint(NalogServiceImpl nalogService, KorisnickiNalogServiceImpl korisnickiNalogService, NalogBankeServiceImpl nalogBankeService) {
 		this.nalogBankeService = nalogBankeService;
 		System.out.println("kreira se izvod endpoint");
 		this.nalogService = nalogService;
 		this.korisnickiNalogService = korisnickiNalogService;
+=======
+	public IzvodZahtevEndPoint(NalogServisImpl nalogService, NalogKorisnikaServisImpl korisnickiNalogService, BankarskiNalogServisImpl nalogBankeService) {
+		this.bankarskiNalogServis = nalogBankeService;
+		System.out.println("kreira se izvod endpoint");
+		this.nalogServis = nalogService;
+		this.nalogKorisnikaServis = korisnickiNalogService;
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 	}
 	
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "sendIzvodZahtevRequest")
@@ -82,7 +104,11 @@ public class IzvodZahtevEndPoint {
 		double ukupnoUKorist = 0;
 		
 		//Novo (trenutno) Stanje
+<<<<<<< HEAD
 		List<NalogKorisnikaEntity> korisnici = korisnickiNalogService.findAll();
+=======
+		List<NalogKorisnikaEntity> korisnici = nalogKorisnikaServis.findAll();
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 		
 		for (NalogKorisnikaEntity korisnickiNalogEntity : korisnici) {
 			if (korisnickiNalogEntity.getRacun().equals(brojRacuna))
@@ -90,9 +116,15 @@ public class IzvodZahtevEndPoint {
 		}
 		
 		//pretrazi sve naloge
+<<<<<<< HEAD
 		List<NalogZaPrenosEntity> nalozi = nalogService.findAll();
 
 		for (NalogZaPrenosEntity nzp : nalozi) {
+=======
+		List<NalogZaPlacanjeEntity> nalozi = nalogServis.findAll();
+
+		for (NalogZaPlacanjeEntity nzp : nalozi) {
+>>>>>>> 0adacb2758328548b12009cca4c3479653db78e5
 			//Racunanje prethodnog stanja pre tog dana
 			if(nzp.getDatumNaloga().before(datumNaloga.toGregorianCalendar().getTime()))
 			{

@@ -1,0 +1,51 @@
+package bankApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import rs.ac.uns.ftn.informatika.domen.NalogZaPrenosEntity;
+import rs.ac.uns.ftn.informatika.nalogzp.NalogZaPrenos;
+
+@Service
+public class NalogServiceImpl implements NalogService{
+	@Autowired
+	private NalogRepository nalogRepository;
+
+	@Override
+	public List<NalogZaPrenosEntity> findAll() {
+		// TODO Auto-generated method stub
+		return nalogRepository.findAll();
+	}
+
+	@Override
+	public NalogZaPrenosEntity findById(Long id) {
+		// TODO Auto-generated method stub
+		return nalogRepository.findById(id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+		nalogRepository.delete(id);
+	}
+
+	@Override
+	public NalogZaPrenosEntity save(NalogZaPrenosEntity nalog) {
+		// TODO Auto-generated method stub
+		return nalogRepository.save(nalog);
+	}
+
+	@Override
+	public NalogZaPrenosEntity findByIdPoruke(String id) {
+		// TODO Auto-generated method stub
+		List<NalogZaPrenosEntity> nalozi = nalogRepository.findAll();
+		for(NalogZaPrenosEntity n: nalozi) {
+			if(n.getIdPoruke().equals(id)) {
+				return n;
+			}
+		}
+		return null;
+	}
+}

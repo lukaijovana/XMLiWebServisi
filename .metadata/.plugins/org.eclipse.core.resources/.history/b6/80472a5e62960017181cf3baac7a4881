@@ -1,0 +1,35 @@
+package centralBankApp;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ClassUtils;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.kliringzahtev.SendKliringRequest;
+import rs.ac.uns.ftn.informatika.kliringzahtev.SendKliringResponse;
+
+public class ApplicationClear {
+
+	public static void main(String[] args) throws Exception {
+		
+		  Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		  Jaxb2Marshaller marshaller1 = new Jaxb2Marshaller();
+		  marshaller.setPackagesToScan(ClassUtils.getPackageName(SendKliringRequest.class));
+		  marshaller.afterPropertiesSet();
+		  WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		  SendKliringRequest request = new SendKliringRequest();
+	        request.setMessage("Zahtevam Kliring!");
+
+	        SendKliringResponse resp = (SendKliringResponse) ws.marshalSendAndReceive("http://localhost:8084"
+	               + "/ws", request);
+	      
+	}
+	
+}

@@ -1,0 +1,223 @@
+package centralnaBankaApp;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.util.ClassUtils;
+import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import rs.ac.uns.ftn.informatika.domen.BankarskiNalogEntity;
+import rs.ac.uns.ftn.informatika.kliringzahtev.SendKliringRequest;
+import rs.ac.uns.ftn.informatika.kliringzahtev.SendKliringResponse;
+import rs.ac.uns.ftn.informatika.mt102.Zahtev102;
+import rs.ac.uns.ftn.informatika.mt102.Send102Response;
+import rs.ac.uns.ftn.informatika.mt102.Stavka;
+import rs.ac.uns.ftn.informatika.mt103.Mt103;
+import rs.ac.uns.ftn.informatika.mt103.SendRtgsRequest;
+import rs.ac.uns.ftn.informatika.mt103.SendRtgsResponse;
+import rs.ac.uns.ftn.informatika.mt103.TUcesnik;
+import rs.ac.uns.ftn.informatika.mt900.Mt900;
+import rs.ac.uns.ftn.informatika.mt900.SendMt900Request;
+import rs.ac.uns.ftn.informatika.mt900.SendMt900Response;
+import rs.ac.uns.ftn.informatika.mt910.Mt910;
+import rs.ac.uns.ftn.informatika.mt910.SendMt910Request;
+import rs.ac.uns.ftn.informatika.mt910.SendMt910Response;
+
+@Endpoint
+public class KliringEndPoint {
+	private static final String NAMESPACE_URI = "http://www.informatika.ftn.uns.ac.rs/kliringZahtev";
+	private NalogBankeService nalogBankeService;
+	@Autowired
+	public KliringEndPoint(NalogBankeServiceImpl nalogBankeService) {
+		this.nalogBankeService = nalogBankeService;
+	}
+	
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "sendKliringRequest")
+	@ResponsePayload
+	public SendKliringResponse getSendKliringResponse(@RequestPayload SendKliringRequest request) {
+		System.out.println(request.getMessage());
+		SendKliringResponse response = new SendKliringResponse();
+		response.setMessage("Primljen zahtev.");
+		
+		//Za sve naloge zahtevaj Mt102 poruku
+		List<BankarskiNalogEntity> nalozi = nalogBankeService.findAll();
+		for (BankarskiNalogEntity nalog : nalozi) {
+			String port = nalog.getPort();
+			System.out.println("==========Za: "+ nalog.getPort());
+			System.out.println(nalog.getObracunskiRacun());
+			try{
+
+			Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+			marshaller.setPackagesToScan(ClassUtils.getPackageName(Zahtev102.class));
+	        marshaller.afterPropertiesSet();
+	        WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+	        Zahtev102 requestMt102 = new Zahtev102();
+	        requestMt102.setMt102Request(port);
+
+	        Send102Response respMt102 = (Send102Response) ws.marshalSendAndReceive("http://localhost:" + port 
+		               + "/ws", requestMt102);
+	        System.out.println("Dobio ob rac duznika:"+respMt102.getMt102Response().getObracunskiRacunBankeDuznika());
+	        System.out.println("===Stavke:");
+	        //TODO: nakaci u listu Mt102 poruki
+	        List <Stavka> stavke = respMt102.getMt102Response().getNalozi();
+	        for (Stavka stavka : stavke) {
+	        	System.out.println(stavka.getRacunDuznika());
+				System.out.println(stavka.getIznos());
+				
+	    		List<BankarskiNalogEntity> banke = nalogBankeService.findAll();
+	    		System.out.println(stavka.getIznos());
+	    		Mt103 vracaj = new Mt103();
+	    		BankarskiNalogEntity zaZaduziti = null;
+	    		BankarskiNalogEntity zaOdobriti = null;
+	    		for(BankarskiNalogEntity nb: banke) {
+	    			if(nb.getObracunskiRacun().equals(respMt102.getMt102Response().getObracunskiRacunBankeDuznika())) {
+	    				zaZaduziti = nb;
+	    			} else {
+	    				zaOdobriti = nb;
+	    			}
+	    		}
+	    		
+	    		if(zaZaduziti != null && zaOdobriti != null) {
+	    			double obracunskiDuznika = zaZaduziti.getStanjeNaRacunu();
+	    			obracunskiDuznika -= stavka.getIznos().doubleValue();
+	    			if(obracunskiDuznika >= 0) {
+	    				//ima dovoljno sredstava banka duznik, dodaj iznos banci primaocu
+	    				double obracunskiPrimaoca = zaOdobriti.getStanjeNaRacunu();
+	    				obracunskiPrimaoca += stavka.getIznos().doubleValue();
+	    				//posalji nalog i poruku odobrenja banci primaoca/zaodobriti
+	    				//posalji poruku o zaduzenju banci duznika
+	    				
+	    				Mt900 odg = new Mt900();
+	    				odg.setIDPoruke("9");
+	    				odg.setSWIFTKodDuznika(zaZaduziti.getSWIFT());
+	    				odg.setDatumValute(respMt102.getMt102Response().getDatumValute());
+	    				odg.setIDPorukeNaloga(stavka.getIDNalogaZaPlacanje());
+	    				odg.setIznos(stavka.getIznos());
+	    				odg.setObracunskiRacunBankeDuznika(zaZaduziti.getObracunskiRacun());
+	    				odg.setSifraValute(respMt102.getMt102Response().getSifraValute());
+	    				zaZaduziti.setStanjeNaRacunu(obracunskiDuznika);
+	    				nalogBankeService.save(zaZaduziti);
+	    				zaOdobriti.setStanjeNaRacunu(obracunskiPrimaoca);
+	    				nalogBankeService.save(zaOdobriti);
+	    				System.out.println("Saljem Mt900 za stavku "+stavka.getIznos());
+	    				try {
+	    					posaljiMt900(odg, zaZaduziti.getPort());
+	    				} catch (Exception e) {
+	    					e.printStackTrace();
+	    				}
+	    				
+	    				vracaj.setDatumNaloga(stavka.getDatumNaloga());
+	    				vracaj.setDatumValute(respMt102.getMt102Response().getDatumValute());
+	    				vracaj.setIDPoruke(stavka.getIDNalogaZaPlacanje());
+	    				vracaj.setIznos(stavka.getIznos());
+	    				vracaj.setSifraValute(respMt102.getMt102Response().getSifraValute());
+	    				vracaj.setSvrhaPlacanja(stavka.getSvrhaPlacanja());
+	    				
+	    				TUcesnik duznikU = new TUcesnik();
+	    				
+	    				duznikU.setModel(BigInteger.valueOf(stavka.getModelZaduzenja()));
+	    				duznikU.setNaziv(stavka.getDuznikNalogodavac());
+	    				duznikU.setObracunskiRacun(zaZaduziti.getObracunskiRacun());
+	    				duznikU.setPozivNaBroj(stavka.getPozivNaBrojZaduzenja());
+	    				duznikU.setRacun(stavka.getRacunDuznika());
+	    				duznikU.setSWIFTKod(zaZaduziti.getSWIFT());
+	    				
+	    				TUcesnik primalacU = new TUcesnik();
+	    				
+	    				primalacU.setModel(BigInteger.valueOf(stavka.getModelOdobrenja()));
+	    				primalacU.setNaziv(stavka.getPrimalacPoverilac());
+	    				primalacU.setObracunskiRacun(zaOdobriti.getObracunskiRacun());
+	    				primalacU.setPozivNaBroj(stavka.getPozivNaBrojOdobrenja());
+	    				primalacU.setRacun(stavka.getRacunPoverioca());
+	    				primalacU.setSWIFTKod(zaOdobriti.getSWIFT());
+	    				
+	    				vracaj.setDuznik(duznikU);
+	    				vracaj.setPrimalac(primalacU);
+	    				System.out.println("Saljem Mt103 za stavku "+vracaj.getIznos());
+	    				//poslati mt103 primaocu
+	    				try {
+	    					posaljiMt103(vracaj, zaOdobriti.getPort());
+	    				} catch (Exception e1) {
+	    					// TODO Auto-generated catch block
+	    					e1.printStackTrace();
+	    				}
+	    				
+	    				//poslati mt910 primaocu
+	    				Mt910 mt910 = new Mt910();
+	    				mt910.setIDPoruke("10");
+	    				mt910.setDatumValute(vracaj.getDatumValute());
+	    				mt910.setIDPorukeNaloga(vracaj.getIDPoruke());
+	    				mt910.setIznos(vracaj.getIznos());
+	    				mt910.setObracunskiRacunBankePoverioca(zaOdobriti.getObracunskiRacun());
+	    				mt910.setSWIFTKodPoverioca(zaOdobriti.getSWIFT());
+	    				mt910.setSifraValute(vracaj.getSifraValute());
+	    				
+	    				System.out.println("Saljem Mt910 za stavku "+mt910.getIznos());
+	    				try {
+	    					posaljiMt910(mt910, zaOdobriti.getPort());
+	    				} catch (Exception e) {
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+	    			}else {
+	    				//banka nema dovoljno sredstava, odbij
+	    			}
+	    		}
+	        	
+	        	
+	        	
+			}
+	        
+	        
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		
+		return response;
+	}
+	
+	private void posaljiMt900(Mt900 mt900, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendMt900Request.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendMt900Request request = new SendMt900Request();
+		request.setMt900(mt900);
+		SendMt900Response resp = (SendMt900Response) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	private void posaljiMt910(Mt910 mt910, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendMt910Request.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendMt910Request request = new SendMt910Request();
+		request.setMt910(mt910);
+		SendMt910Response resp = (SendMt910Response) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+	
+	private void posaljiMt103(Mt103 nalog, String port) throws Exception {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan(ClassUtils.getPackageName(SendRtgsRequest.class));
+        marshaller.afterPropertiesSet();
+		WebServiceTemplate ws = new WebServiceTemplate(marshaller);
+		SendRtgsRequest request = new SendRtgsRequest();
+		request.setMt103(nalog);
+		SendRtgsResponse resp = (SendRtgsResponse) ws.marshalSendAndReceive("http://localhost:" + port 
+	               + "/ws", request);
+	     System.out.println(resp.getOdgovor());
+	}
+}
