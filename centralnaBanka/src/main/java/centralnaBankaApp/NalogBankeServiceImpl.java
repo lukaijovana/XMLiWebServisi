@@ -1,0 +1,36 @@
+package centralnaBankaApp;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import rs.ac.uns.ftn.informatika.domen.NalogBankeEntity;
+
+@Service
+public class NalogBankeServiceImpl implements NalogBankeService {
+	
+	@Autowired
+	private NalogBankeRepository nalogBankeRepository;
+	
+	@Override
+	public List<NalogBankeEntity> findAll() {
+		return nalogBankeRepository.findAll();
+	}
+
+	@Override
+	public NalogBankeEntity findById(Long id) {
+		return nalogBankeRepository.findById(id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		nalogBankeRepository.delete(id);
+	}
+
+	@Override
+	public NalogBankeEntity save(NalogBankeEntity nalog) {
+		return nalogBankeRepository.save(nalog);
+	}
+
+}
